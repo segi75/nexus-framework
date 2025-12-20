@@ -1,0 +1,15 @@
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'nexus-framework'
+
+includeBuild 'build-logic'
+include 'modules:nexus-core'
+include 'modules:nexus-web-starter'
+include 'modules:nexus-test-starter'
+include 'samples:nexus-sample-app'

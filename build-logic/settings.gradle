@@ -1,0 +1,8 @@
+rootProject.name = 'nexus-build-logic'
+
+dependencyResolutionManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
