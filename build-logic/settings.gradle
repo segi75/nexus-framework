@@ -1,8 +1,14 @@
-rootProject.name = 'nexus-build-logic'
+rootProject.name = 'build-logic'
 
 dependencyResolutionManagement {
     repositories {
-        gradlePluginPortal()
         mavenCentral()
+        gradlePluginPortal()
+    }
+    versionCatalogs {
+        create("libs") {
+            // 핵심: "내 위치(build-logic)에서 한 칸 위(../)에 있는 gradle 폴더를 찾아봐"
+            from(files("../gradle/libs.versions.toml"))
+        }
     }
 }

@@ -1,3 +1,28 @@
 plugins {
-    id 'nexus.java-conventions'
+    id 'nexus.java-conventions'        // 우리가 만든 Java 21 표준 규칙
+    id 'java-library'                  // 라이브러리 모듈임을 명시
+    alias(libs.plugins.dependency.management) // TOML에서 가져옴!  스프링 의존성 관리 기능 사용
 }
+
+dependencyManagement {
+    imports {
+        // Spring Boot의 모든 버전 정보를 가져옵니다 (BOM)
+        mavenBom libs.spring.boot.dependencies.get().toString()
+    }
+}
+
+dependencies {
+    // Core는 웹, DB 등 어디서든 쓰이므로 가장 가벼운 의존성만 가집니다.
+    
+    // 1. Spring Context (IoC, Bean 등 핵심 기능)
+    api libs.spring.boot.starter 
+    
+    // 2. 유틸리티 (Lombok, Jackson)
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+    api libs.jackson.databind
+    
+    // 3. 런타임 모니터링 준비 (TraceId 등)
+    implementation 'io.micrometer:micrometer-observation'
+}
+

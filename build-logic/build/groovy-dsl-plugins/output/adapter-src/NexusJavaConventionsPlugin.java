@@ -7,10 +7,8 @@ import org.gradle.internal.resource.StringTextResource;
 /**
  * Precompiled nexus.java-conventions script plugin.
  **/
-@SuppressWarnings("DefaultPackage")
 public class NexusJavaConventionsPlugin implements org.gradle.api.Plugin<org.gradle.api.internal.project.ProjectInternal> {
-    private static final String MIN_SUPPORTED_GRADLE_VERSION = "7.0";
-    @Override
+    private static final String MIN_SUPPORTED_GRADLE_VERSION = "5.0";
     public void apply(org.gradle.api.internal.project.ProjectInternal target) {
         assertSupportedByCurrentGradleVersion();
         try {
@@ -36,7 +34,7 @@ public class NexusJavaConventionsPlugin implements org.gradle.api.Plugin<org.gra
   }
   private static void assertSupportedByCurrentGradleVersion() {
       if (GradleVersion.current().getBaseVersion().compareTo(GradleVersion.version(MIN_SUPPORTED_GRADLE_VERSION)) < 0) {
-          throw new RuntimeException("Precompiled Groovy script plugins built by Gradle 9.4.0-milestone-3 require Gradle "+MIN_SUPPORTED_GRADLE_VERSION+" or higher");
+          throw new RuntimeException("Precompiled Groovy script plugins require Gradle "+MIN_SUPPORTED_GRADLE_VERSION+" or higher");
       }
   }
 }

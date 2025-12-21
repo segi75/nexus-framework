@@ -1,3 +1,26 @@
 plugins {
     id 'groovy-gradle-plugin'
 }
+
+dependencies {
+    // TOML의 [libraries]에 정의된 이름 그대로 가져옵니다.
+    // 점(.)은 TOML의 대시(-)를 의미합니다.
+    
+    // 1. spring-boot-gradle-plugin
+    implementation libs.spring.boot.gradle.plugin
+    
+    // 2. kotlin-gradle-plugin
+    implementation libs.kotlin.gradle.plugin
+    
+    // 3. spring-dependency-management-plugin (이름 변경 반영!)
+    implementation libs.spring.dependency.management.plugin
+}
+
+gradlePlugin {
+    plugins {
+        nexusJavaConventions {
+            id = 'nexus.java-conventions'
+            implementationClass = 'com.nexusframework.build.NexusJavaConventionsPlugin'
+        }
+    }
+}

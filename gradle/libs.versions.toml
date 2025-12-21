@@ -1,0 +1,80 @@
+[versions]
+# --- 1. Core Base ---
+java = "21"
+# [변경] 3.2.4 (EOL) -> 3.4.13 (안정적인 최신 버전)
+springBoot = "3.4.13" 
+dependencyManagement = "1.1.7" # 의존성 관리 플러그인도 최신으로
+kotlin = "1.9.25"
+
+# --- 2. Persistence ---
+mybatis = "3.0.4" # 3.4 호환 버전으로 소폭 상승
+mysql = "8.3.0"
+h2 = "2.2.224"
+
+# --- 3. Observability (관측성: 로그/모니터링/추적) ---
+opentelemetry = "1.36.0"       # 분산 추적 표준 (Trace)
+micrometer = "1.12.4"          # 메트릭 수집 표준 (Metrics)
+logbackEncoder = "7.4"         # [추가] 로그를 JSON으로 예쁘게 찍어주는 도구
+
+# --- 4. Tools & Utils (생산성 도구) ---
+lombok = "1.18.30"             # Getter/Setter 자동 생성
+jackson = "2.16.1"             # JSON 데이터 파싱
+flyway = "10.10.0"             # DB 마이그레이션 도구 (스키마 버전 관리)
+
+# --- 5. Testing (테스트 표준) ---
+junit = "5.10.2"               # 테스트 프레임워크 본체
+mockito = "5.11.0"             # 가짜 객체(Mock) 생성기
+assertj = "3.25.3"             # 테스트 검증 코드를 사람 말처럼 쓰게 해줌
+archunit = "1.2.1"             # 아키텍처 규칙 검사 (Layer 위반 등)
+testcontainers = "1.19.7"      # 테스트할 때 Docker로 실제 DB를 띄워줌
+
+[libraries]
+# ==========================================
+# A. 빌드 로직용 플러그인 (공장을 돌리는 도구들)
+# ==========================================
+spring-boot-gradle-plugin = { group = "org.springframework.boot", name = "spring-boot-gradle-plugin", version.ref = "springBoot" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+spring-dependency-management-plugin = { group = "io.spring.gradle", name = "dependency-management-plugin", version.ref = "dependencyManagement" }
+
+# ==========================================
+# B. 런타임 라이브러리 (실제 서비스에 들어가는 부품)
+# ==========================================
+
+# --- B-1. Spring Boot Core ---
+spring-boot-starter = { group = "org.springframework.boot", name = "spring-boot-starter", version.ref = "springBoot" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web", version.ref = "springBoot" }
+spring-boot-starter-aop = { group = "org.springframework.boot", name = "spring-boot-starter-aop", version.ref = "springBoot" } # 관점 지향 프로그래밍 (로그/권한 등)
+spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation", version.ref = "springBoot" } # 입력값 검증 (@NotNull 등)
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test", version.ref = "springBoot" }
+spring-boot-starter-actuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "springBoot" } # 상태 모니터링 (/actuator)
+# [중요] 스프링 부트가 관리하는 수많은 라이브러리의 버전을 통째로 관리하는 문서(BOM)
+spring-boot-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "springBoot" }
+
+# --- B-2. Persistence ---
+mybatis-starter = { group = "org.mybatis.spring.boot", name = "mybatis-spring-boot-starter", version.ref = "mybatis" }
+mysql-connector = { group = "com.mysql", name = "mysql-connector-j", version.ref = "mysql" }
+h2-database = { group = "com.h2database", name = "h2", version.ref = "h2" }
+
+# --- B-3. Observability (관측성) ---
+otel-bom = { group = "io.opentelemetry", name = "opentelemetry-bom", version.ref = "opentelemetry" }
+micrometer-registry-prometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometer" }
+# [추가] 스프링 부트 3와 OpenTelemetry를 연결하는 다리 역할 (필수)
+micrometer-tracing-bridge-otel = { group = "io.micrometer", name = "micrometer-tracing-bridge-otel", version.ref = "micrometer" }
+# [추가] 로그를 JSON 포맷으로 변환 (ELK 스택 연동용)
+logback-encoder = { group = "net.logstash.logback", name = "logstash-logback-encoder", version.ref = "logbackEncoder" }
+
+# --- B-4. Utils ---
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
+
+# --- B-5. Testing ---
+archunit = { group = "com.tngtech.archunit", name = "archunit-junit5", version.ref = "archunit" }
+testcontainers = { group = "org.testcontainers", name = "junit-jupiter", version.ref = "testcontainers" }
+
+[plugins]
+# ==========================================
+# C. 루트 프로젝트에서 사용할 플러그인 ID 단축키
+# ==========================================
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+dependency-management = { id = "io.spring.dependency-management", version.ref = "dependencyManagement" }
+jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
