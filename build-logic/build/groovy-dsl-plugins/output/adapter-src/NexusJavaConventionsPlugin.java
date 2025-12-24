@@ -18,6 +18,7 @@ public class NexusJavaConventionsPlugin implements org.gradle.api.Plugin<org.gra
             pluginsBlockScript.init(target, target.getServices());
             pluginsBlockScript.run();
             target.getPluginManager().apply("java-library");
+            target.getPluginManager().apply("io.spring.dependency-management");
 
 
             Class<? extends BasicScript> precompiledScriptClass = Class.forName("precompiled_NexusJavaConventions").asSubclass(BasicScript.class);

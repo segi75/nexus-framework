@@ -1,3 +1,8 @@
 plugins {
     id 'nexus.java-conventions'
 }
+
+dependencies {
+    implementation project(':modules:nexus-core')
+    implementation 'org.springframework.boot:spring-boot-starter-web' // 버전 안 적어도 위에서 관리함
+}

@@ -1,3 +1,18 @@
 plugins {
     id 'nexus.java-conventions'
 }
+
+dependencies {
+    // 1. 핵심 모듈 노출 (api를 써야 가져다 쓰는 쪽에서 NexusResponse가 보입니다)
+    api project(':modules:nexus-core')
+
+    // 2. Web 개발 필수품 (Tomcat, MVC 등)
+    api 'org.springframework.boot:spring-boot-starter-web'
+    
+    // 3. 유효성 검사 (@NotNull, @Size 등) - 추후 자동 검증에 필수
+    api 'org.springframework.boot:spring-boot-starter-validation'
+
+    // 4. 개발 편의성 (Lombok)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}

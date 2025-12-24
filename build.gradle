@@ -1,0 +1,23 @@
+plugins {
+    id 'org.springframework.boot' version '3.2.2' apply false
+    id 'io.spring.dependency-management' version '1.1.4' apply false
+}
+
+allprojects {
+    group = 'com.nexus'
+    version = '1.0.0-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+// [중요] subprojects 블록에서 'apply plugin: java' 삭제!
+// 이제부터는 각 모듈이 'nexus.java-conventions' 플러그인을 통해
+// 필요한 설정(java-library 등)을 스스로 주입받습니다.
+subprojects {
+    // 공통적으로 인코딩 설정 정도만 남깁니다.
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+}

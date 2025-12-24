@@ -1,5 +1,20 @@
 plugins {
     id 'java-library'
+    id 'io.spring.dependency-management'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:3.2.2"
+    }
+}
+
+dependencies {
+    // 공통적으로 쓰일 의존성 (필요하면 추가)
 }
 
 java {
@@ -10,4 +25,8 @@ java {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
 }

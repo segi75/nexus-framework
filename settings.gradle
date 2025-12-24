@@ -1,5 +1,7 @@
-
 pluginManagement {
+    // 1. build-logic을 플러그인 빌드로 포함 (여기가 핵심 위치!)
+    includeBuild 'build-logic'
+    
     repositories {
         gradlePluginPortal()
         mavenCentral()
@@ -8,8 +10,11 @@ pluginManagement {
 
 rootProject.name = 'nexus-framework'
 
-includeBuild 'build-logic'
+// 2. 실제 모듈들 포함
 include 'modules:nexus-core'
 include 'modules:nexus-web-starter'
 include 'modules:nexus-test-starter'
 include 'samples:nexus-sample-app'
+// (nexus-bom은 build-logic이나 모듈 안에서 참조하므로 include 불필요하거나, 별도 관리시 유지. 
+//  보통 bom도 include 하는 것이 맞으나, 현재 구조상 명시해줍니다.)
+include 'nexus-bom'
