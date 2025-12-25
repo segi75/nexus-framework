@@ -1,0 +1,23 @@
+plugins {
+    id 'java-library'
+}
+
+description = 'NEXUS Test Starter - Standard Testing Framework'
+
+dependencies {
+    // 1. NEXUS Core (공통 모델 테스트 지원)
+    api project(':nexus-core')
+
+    // 2. Spring Boot Test Starter (JUnit5, Mockito, AssertJ, Hamcrest 포함)
+    // 'api'로 선언하여, 이를 사용하는 프로젝트에도 전파되게 함
+    api 'org.springframework.boot:spring-boot-starter-test'
+
+    // 3. 테스트용 인메모리 DB (가볍게 DB 테스트할 때 사용)
+    api 'com.h2database:h2'
+    
+    // 4. 스펙 검증용 라이브러리 (선택 사항, 유용함)
+    api 'org.assertj:assertj-core' 
+    
+    // 이클립스에서 JUnit 5를 실행하기 위한 필수 런처
+    api 'org.junit.platform:junit-platform-launcher'
+}

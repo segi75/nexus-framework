@@ -11,10 +11,12 @@ pluginManagement {
 rootProject.name = 'nexus-framework'
 
 // 2. 실제 모듈들 포함
-include 'modules:nexus-core'
-include 'modules:nexus-web-starter'
-include 'modules:nexus-test-starter'
-include 'samples:nexus-sample-app'
-// (nexus-bom은 build-logic이나 모듈 안에서 참조하므로 include 불필요하거나, 별도 관리시 유지. 
-//  보통 bom도 include 하는 것이 맞으나, 현재 구조상 명시해줍니다.)
 include 'nexus-bom'
+include 'nexus-core'
+include 'nexus-web-starter'
+include 'nexus-obs-starter'
+include 'nexus-mybatis-starter'
+include 'nexus-test-starter'
+include 'nexus-sample-app'
+// 트랜잭션 표준 정책 모듈
+include 'nexus-tx'

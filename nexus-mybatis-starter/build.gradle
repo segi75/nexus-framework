@@ -1,0 +1,28 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // 1. 우리 가족 (Core 필수)
+    api project(':nexus-core')
+
+    // 2. MyBatis (핵심 엔진)
+    api 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
+    // (spring-boot-starter-jdbc는 mybatis-starter 안에 이미 포함되어 있어서 생략 가능하지만, 둬도 무방합니다)
+
+    // 3. DB 드라이버 (Spec 6.2: MSSQL 우선 지원)
+    // [수정 포인트 1] compileOnly -> runtimeOnly
+    // 이렇게 해야 실제 실행할 때 드라이버가 포함되어 바로 DB 접속이 가능합니다.
+    runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+    
+    // MySQL은 선택 사항이므로 현재는 주석 처리하거나 빼도 됩니다. (나중에 필요할 때 추가)
+    // compileOnly 'com.mysql:mysql-connector-j' 
+
+    // 4. 편의 도구
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // [수정 포인트 2] 테스트 품질 관리를 위해 필수!
+    // 아까 만든 테스트 스타터를 연결해야 검사를 돌릴 수 있습니다.
+    testImplementation project(':nexus-test-starter')
+}

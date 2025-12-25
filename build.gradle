@@ -12,10 +12,29 @@ allprojects {
     }
 }
 
-// [중요] subprojects 블록에서 'apply plugin: java' 삭제!
 // 이제부터는 각 모듈이 'nexus.java-conventions' 플러그인을 통해
 // 필요한 설정(java-library 등)을 스스로 주입받습니다.
 subprojects {
+
+    // nexus-bom 모듈은 제외합니다.
+	if (it.name == 'nexus-bom') {
+        return
+    }
+
+	// BOM 기능을 쓰기 위해 매니지먼트 플러그인을 장착합니다.
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
+    
+    // nexus-bom을 수입해서 버전을 통제합니다.
+    dependencies {
+    	// 공통 라이브러리 버전 관리를 위한 BOM 수입(nexus-bom을 '플랫폼'으로 가져옵니다.)
+        implementation platform(project(':nexus-bom'))
+        annotationProcessor platform(project(':nexus-bom'))
+        
+        // 테스트 도구 공통 적용
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+    
     // 공통적으로 인코딩 설정 정도만 남깁니다.
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'

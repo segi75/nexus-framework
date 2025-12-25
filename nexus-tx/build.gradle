@@ -1,0 +1,20 @@
+plugins {
+    id 'java-library'
+}
+
+description = 'NEXUS Transaction - Standard Transaction Policies'
+
+dependencies {
+    // 1. Core 모듈 (필수)
+    api project(':nexus-core')
+
+    // 2. Spring Transaction & AOP (트랜잭션 제어의 핵심)
+    api 'org.springframework:spring-tx'
+    api 'org.springframework.boot:spring-boot-starter-aop'
+    
+    // 3. 편의 도구
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    testImplementation project(':nexus-test-starter')
+}

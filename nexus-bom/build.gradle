@@ -10,10 +10,13 @@ javaPlatform {
 }
 
 dependencies {
-    constraints {
-        // Spring Boot 및 주요 라이브러리 버전 고정
-        api 'org.springframework.boot:spring-boot-dependencies:3.2.2'
-        api 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
-        // 여기에 향후 추가될 모든 라이브러리 버전을 정의합니다.
-    }
+
+        // Spring Boot의 모든 버전 정보를 우리 BOM이 흡수합니다.
+    	api platform('org.springframework.boot:spring-boot-dependencies:3.2.2')
+	    
+	    // 추가로 정하는 버전 규칙들
+	    constraints {
+	        api 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+	        // 여기에 향후 추가될 모든 라이브러리 버전을 정의합니다.
+	    }
 }

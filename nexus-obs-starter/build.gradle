@@ -1,0 +1,23 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // 1. 우리 가족 모듈 가져오기
+    api project(':nexus-core')
+
+    // 2. Spring Boot 관제 도구 (Actuator, AOP)
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    
+    // 필터(Filter)를 만들기 위한 웹 도구 상자
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // 3. 마이크로미터 (추적용)
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    
+    // 4. 로깅 관련 (Logback, Slf4j는 부트 기본 포함이나 명시적 제어 필요시 사용)
+    // Lombok (편의성)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}
