@@ -48,53 +48,53 @@ dependencies {
     // NEXUS BOM을 통해 모든 모듈의 버전을 관리합니다.
     implementation platform('com.nexus:nexus-bom:1.0.0')
 }
-2. 필요한 스타터 추가
-dependencies {
-    // 웹 + 관측성 + DB + 트랜잭션 기능을 한 번에 적용
-    implementation 'com.nexus:nexus-web-starter'
-    implementation 'com.nexus:nexus-obs-starter'
-    implementation 'com.nexus:nexus-mybatis-starter'
-    implementation 'com.nexus:nexus-tx'
-    
-    // 테스트 도구 모음
-    testImplementation 'com.nexus:nexus-test-starter'
-}
-2. 안전한 데이터 액세스 (nexus-mybatis)
-Auto Paging: PageRequest 객체만 넘기면 DB 방언(Dialect)에 맞춰 페이징 쿼리가 자동 생성됩니다.
+```
 
-Safety Guard: WHERE 절 없는 UPDATE/DELETE 실행 시 예외를 발생시켜 데이터를 보호합니다.
+### 2. 안전한 데이터 액세스 (`nexus-mybatis`)
 
-3. 명시적 트랜잭션 관리 (nexus-tx)
+* **Auto Paging:** `PageRequest` 객체만 넘기면 DB 방언(Dialect)에 맞춰 페이징 쿼리가 자동 생성됩니다.
+* **Safety Guard:** `WHERE` 절 없는 `UPDATE/DELETE` 실행 시 **예외를 발생시켜 데이터를 보호**합니다.
+
+### 3. 명시적 트랜잭션 관리 (`nexus-tx`)
+
 복잡한 옵션 대신 표준 어노테이션을 사용합니다.
 
-@TxRead: 읽기 전용, 성능 최적화 (Timeout 30s)
+* `@TxRead`: 읽기 전용, 성능 최적화 (Timeout 30s)
+* `@TxWrite`: 쓰기 전용, **모든 예외(Exception) 발생 시 자동 롤백** (Timeout 60s)
 
-@TxWrite: 쓰기 전용, 모든 예외(Exception) 발생 시 자동 롤백 (Timeout 60s)
+### 4. 분산 추적 시스템 (`nexus-obs`)
 
-4. 분산 추적 시스템 (nexus-obs)
-요청이 들어오는 순간 고유한 TraceId가 발급되며, 로그(MDC)와 응답 헤더, 에러 메시지 등 모든 구간에 자동 전파됩니다.
+요청이 들어오는 순간 고유한 `TraceId`가 발급되며, 로그(MDC)와 응답 헤더, 에러 메시지 등 모든 구간에 자동 전파됩니다.
 
-🛠️ 기술 스택 (Tech Stack)
-Language: Java 21 LTS
+---
 
-Framework: Spring Boot 3.2.2
+## 🛠️ 기술 스택 (Tech Stack)
 
-Build Tool: Gradle 8.x (Kotlin/Groovy DSL)
+* **Language:** Java 21 LTS
+* **Framework:** Spring Boot 3.2.2
+* **Build Tool:** Gradle 8.x (Kotlin/Groovy DSL)
+* **ORM:** MyBatis 3.x
+* **Database:** MSSQL (Primary), H2 (Test)
 
-ORM: MyBatis 3.x
+---
 
-Database: MSSQL (Primary), H2 (Test)
+## 📅 로드맵 (Roadmap)
 
-📅 로드맵 (Roadmap)
-v1.0 (Current): Core, Web, Obs, MyBatis, Tx, Test 모듈 구축 완료
+* **v1.0 (Current):** Core, Web, Obs, MyBatis, Tx, Test 모듈 구축 완료
+* **v2.0 (Planned):** Security(인증/인가), Audit(감사로그), Idempotency(멱등성)
+* **v3.0 (Planned):** Outbox Pattern, Reliability(재처리), Code Generator
 
-v2.0 (Planned): Security(인증/인가), Audit(감사로그), Idempotency(멱등성)
+---
 
-v3.0 (Planned): Outbox Pattern, Reliability(재처리), Code Generator
+## 👨‍💻 Maintainers
 
-👨‍💻 Maintainers
-Architect: NEXUS Architecture Team
+* **Architect:** NEXUS Architecture Team
+* **Repository:** [https://github.com/segi75/nexus-framework](https://www.google.com/search?q=https://github.com/segi75/nexus-framework)
 
-Repository: https://github.com/segi75/nexus-framework
+---
 
 Copyright © 2025 NEXUS Framework. All Rights Reserved.
+
+```
+
+```
