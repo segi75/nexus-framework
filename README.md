@@ -74,6 +74,8 @@ public ResponseEntity<NexusUser> getMyInfo(@CurrentUser NexusUser user) {
     log.info("Access User: {}", user.getName());
     return ResponseEntity.ok(user);
 }
+```
+
 2. 안전한 데이터 액세스 (nexus-mybatis)
 Auto Paging: PageRequest 객체만 넘기면 DB 방언(Dialect)에 맞춰 쿼리가 자동 생성됩니다.
 
