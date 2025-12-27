@@ -1,0 +1,26 @@
+// nexus-security-starter/build.gradle
+plugins {
+    id 'java-library' // Starter는 라이브러리 역할을 하므로 java-library
+}
+
+dependencies {
+    // 1. NEXUS Core (기본 유틸리티)
+    api project(':nexus-core')
+
+    // 2. Spring Security & Web (사용자에게 전파되어야 함 -> api)
+    api 'org.springframework.boot:spring-boot-starter-security'
+    api 'org.springframework.boot:spring-boot-starter-web'
+
+    // 3. JWT 구현체 (사용자는 몰라도 됨 -> implementation으로 은닉)
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 4. 자동 설정 프로세서
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+}
+
+description = "NEXUS Security Starter - Zero Config Security Module"

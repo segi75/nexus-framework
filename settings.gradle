@@ -20,3 +20,5 @@ include 'nexus-test-starter'
 include 'nexus-sample-app'
 // 트랜잭션 표준 정책 모듈
 include 'nexus-tx'
+// [New Phase 2.0] Security Starter 추가
+include 'nexus-security-starter'
