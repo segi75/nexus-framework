@@ -1,6 +1,0 @@
-server:
-  port: 8081  # 8080이 꽉 찼으니 8081로 피신합니다.
-
-spring:
-  application:
-    name: nexus-sample

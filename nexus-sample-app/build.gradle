@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+group = 'com.nexus.sample'
+version = '0.0.1-SNAPSHOT'
+
+dependencies {
+    // 1. NEXUS BOM 적용 (버전 통제)
+    implementation platform(project(':nexus-bom'))
+
+    // 2. NEXUS 핵심 스타터 적용
+    implementation project(':nexus-web-starter')     // 웹 표준
+    implementation project(':nexus-obs-starter')     // 로깅/추적
+    implementation project(':nexus-mybatis-starter') // DB
+    implementation project(':nexus-tx')              // 트랜잭션
+
+    // 3. DB 드라이버 (일단 H2로 가볍게 시작, 나중에 MSSQL 붙임)
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+
+    // 4. 유틸
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // 5. 테스트
+    testImplementation project(':nexus-test-starter')
+    
+    // 6. MapStruct (DTO 변환 핵심) - 버전은 BOM에 없다면 명시 필요
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    
+    //  Lombok과 MapStruct 연결고리 (이게 없으면 빌드 깨짐)
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+}
+
+test {
+    useJUnitPlatform()
+}

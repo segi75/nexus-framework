@@ -1,10 +1,11 @@
-package com.example.demo;
+package com.nexus.sample;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
-// 우리가 만든 프레임워크 패키지(com.nexusframework)도 스캔해야 설정이 먹힙니다.
-@SpringBootApplication(scanBasePackages = {"com.example.demo", "com.nexusframework"})
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.nexus", "com.nexus.sample"}) // 프레임워크와 샘플 앱 모두 스캔
 public class NexusSampleApplication {
 
     public static void main(String[] args) {
