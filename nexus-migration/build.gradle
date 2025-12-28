@@ -1,0 +1,22 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // 1. NEXUS Core (기본 유틸)
+    api project(':nexus-core')
+    
+    // 2. Flyway Core (핵심 엔진)
+    api 'org.flywaydb:flyway-core'
+    
+ 
+    // 4. Spring Boot Autoconfigure (설정 자동화용)
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    
+    // 5. Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+}
+
+description = "NEXUS Migration - DB Schema Management Standard"

@@ -3,6 +3,7 @@ package com.nexus.security.config;
 import java.util.List;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean; // [필수]
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -35,37 +36,48 @@ public class NexusSecurityAutoConfiguration {
 
     // 1. Spring Security Filter Chain 구성
     @Bean
+    @ConditionalOnMissingBean(SecurityFilterChain.class) // [핵심 2] 개발자가 별도 설정하면 이건 빠져줌 (확장성)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("[NEXUS] Security Auto-Configuration Enabled. Public URLs: {}", properties.getPublicUrls());
 
+        // getPublicUrls() -> getFinalPublicUrls() 호출
+        List<String> finalPublicUrls = properties.getFinalPublicUrls();
+        log.info("[NEXUS] Security Config Active. Final Public URLs: {}, FormLogin: {}", 
+                finalPublicUrls, properties.isUseFormLogin());
+        
         http
-            .csrf(AbstractHttpConfigurer::disable) // REST API라 불필요
-            .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 미사용
-            .httpBasic(AbstractHttpConfigurer::disable)
+            .csrf(AbstractHttpConfigurer::disable)
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())) // H2 콘솔 깨짐 방지
+            .httpBasic(AbstractHttpConfigurer::disable);
+
+        // [핵심 1] 설정값에 따른 동적 구성
+        if (properties.isUseFormLogin()) {
+            // Case A: 폼 로그인 사용 (관리자 페이지 등)
+            http.formLogin(form -> form.permitAll());
             
-            // 세션 정책: STATELESS (JWT 사용)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // 폼 로그인은 세션이 필요하므로 STATELESS 강제를 풂 (기본값: IF_REQUIRED)
+            // 별도 설정 안 함 = 필요하면 세션 만듦
+        } else {
+            // Case B: API 전용 모드 (기본값)
+            http.formLogin(AbstractHttpConfigurer::disable);
+            http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션 끄기
+        }
             
-            // URL별 권한 관리
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(properties.getPublicUrls().toArray(new String[0])).permitAll() // 설정된 Public URL 허용
-                .anyRequest().authenticated() // 나머지는 인증 필수
+        http.authorizeHttpRequests(auth -> auth
+        		.requestMatchers(finalPublicUrls.toArray(new String[0])).permitAll()
+                .anyRequest().authenticated()
             )
-            
-            // JWT 필터 추가 (UsernamePasswordAuthenticationFilter 앞에 배치)
             .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
             
         return http.build();
     }
     
-    // 2. Argument Resolver 등록 (WebMvc)
+    // 2. Argument Resolver 등록
     @Bean
     public WebMvcConfigurer nexusWebMvcConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
                 resolvers.add(new NexusUserArgumentResolver());
-                log.debug("[NEXUS] NexusUserArgumentResolver registered.");
             }
         };
     }

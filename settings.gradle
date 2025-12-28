@@ -22,3 +22,5 @@ include 'nexus-sample-app'
 include 'nexus-tx'
 // [New Phase 2.0] Security Starter 추가
 include 'nexus-security-starter'
+// [New Phase 2.1] DB Migration 모듈 추가
+include 'nexus-migration'
