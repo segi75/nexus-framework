@@ -2,10 +2,28 @@ plugins {
     id 'java'
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
+    id 'eclipse' // [수정 1] eclipse 설정 블록을 위해 필수 추가
 }
 
 group = 'com.nexus.sample'
 version = '0.0.1-SNAPSHOT'
+
+// [옵션] Java 컴파일 시 인코딩 및 파라미터 정보 유지
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+    
+    // [수정 2] Annotation Processor가 생성하는 파일 위치를 'src-gen'으로 강제 지정
+    // 이 설정이 없으면 기본적으로 build/generated/... 경로에 생성됩니다.
+    options.generatedSourceOutputDirectory = file('src-gen')
+}
+
+// [옵션] MapStruct가 Spring Bean으로 등록되도록 전역 설정 (매번 componentModel='spring' 안 써도 됨)
+tasks.withType(JavaCompile) {
+    options.compilerArgs += [
+        '-Amapstruct.defaultComponentModel=spring'
+    ]
+}
 
 dependencies {
     // 1. NEXUS BOM 적용 (버전 통제)
@@ -16,54 +34,123 @@ dependencies {
     implementation project(':nexus-obs-starter')     // 로깅/추적
     implementation project(':nexus-mybatis-starter') // DB
     implementation project(':nexus-tx')              // 트랜잭션
-	implementation project(':nexus-security-starter') // 시큐리티
-	implementation project(':nexus-migration')        // DB 마이그레이션
+    implementation project(':nexus-security-starter') // 시큐리티
+    implementation project(':nexus-migration')        // DB 마이그레이션
 
-    // 3. DB 드라이버 (일단 H2로 가볍게 시작, 나중에 MSSQL 붙임)
+    // 3. DB 드라이버 (H2, MSSQL)
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 
-    // 4. 유틸
+    // 4. 유틸 (Lombok)
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     
-            //  Lombok과 MapStruct 연결고리 (이게 없으면 빌드 깨짐)
+    // Lombok과 MapStruct 연결고리
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
     
     // 5. 테스트
     testImplementation project(':nexus-test-starter')
   
-
-    
-    // 6. MapStruct (DTO 변환 핵심) - 버전은 BOM에 없다면 명시 필요
+    // 6. MapStruct (DTO 변환 핵심)
+    // Tip: 가능하다면 버전 정보도 nexus-bom으로 옮기는 것을 추천합니다.
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-    
-	sourceSets {
-	    main {
-	        java {
-	            srcDirs 'src/main/java', 'src-gen'
-	        }
-	    }
-	}
+}
+
+// 소스셋 설정: src-gen을 소스 경로에 포함
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java', 'src-gen'
+        }
+    }
 }
 
 test {
     useJUnitPlatform()
 }
 
-
+// 이클립스 설정: src-gen 폴더가 없으면 만들고 소스 폴더로 등록
 eclipse {
+	
+    // 2. 이클립스 JDT 설정 (Annotation Processing 켜기)
+    jdt {
+        file {
+            withProperties { props ->
+                props.setProperty('org.eclipse.jdt.core.compiler.processAnnotations', 'enabled')
+            }
+        }
+    }
+    
+    // 3. src-gen 폴더를 소스 폴더로 추가
     classpath {
-        // 'src-gen' 폴더가 있다면 소스 폴더로 인식하라는 명령
         file {
             whenMerged {
-                def srcGen = entries.find { it.path == 'src-gen' }
+                def srcGenPath = 'src-gen'
+                def srcGen = entries.find { it.path == srcGenPath }
+                
+                // src-gen 폴더가 실제로 없으면 생성 (에러 방지)
+                def srcGenDir = file(srcGenPath)
+                if (!srcGenDir.exists()) {
+                    srcGenDir.mkdirs()
+                }
+
                 if (srcGen == null) {
-                    // src-gen이 없으면 강제로 추가 (kind: 'src')
-                    entries.add(new org.gradle.plugins.ide.eclipse.model.SourceFolder('src-gen', null))
+                    // src-gen을 소스 폴더(kind: src)로 추가
+                    def sourceFolder = new org.gradle.plugins.ide.eclipse.model.SourceFolder(srcGenPath, null)
+                    entries.add(sourceFolder)
                 }
             }
         }
     }
+}
+
+// clean 태스크 실행 시 src-gen 폴더도 같이 정리할지 결정 (선택 사항)
+clean {
+    delete 'src-gen'
+}
+// ========================================================
+// [Fix] Eclipse .factorypath 파일 강제 생성 스크립트
+// ========================================================
+task generateEclipseFactoryPath {
+    // .factorypath 파일 위치 지정
+    def factoryPathFile = file('.factorypath')
+    
+    // annotationProcessor에 등록된 라이브러리(MapStruct, Lombok 등)를 감지
+    inputs.files configurations.annotationProcessor
+    outputs.file factoryPathFile
+    
+    doLast {
+        // XML 파일 쓰기 시작
+        def writer = new FileWriter(factoryPathFile)
+        def xmlBuilder = new groovy.xml.MarkupBuilder(writer)
+        
+        xmlBuilder.factorypath {
+            // 라이브러리 목록을 순회하며 XML 태그 생성
+            configurations.annotationProcessor.files.each { File file ->
+                factorypathentry(
+                    kind: 'EXTJAR',
+                    id: file.absolutePath,
+                    enabled: true,
+                    runInBatchMode: false
+                )
+            }
+        }
+        writer.close()
+    }
+}
+
+task ensureSrcGenExists {
+    doLast {
+        def srcGenDir = file('src-gen')
+        if (!srcGenDir.exists()) {
+            srcGenDir.mkdirs()
+            println "✅ Created missing source folder: src-gen"
+        }
+    }
+}
+
+// 'cleanEclipse'나 'eclipse' 태스크 실행 시 위 로직이 무조건 먼저 돌도록 연결
+tasks.named('eclipse').configure {
+    dependsOn generateEclipseFactoryPath
 }
