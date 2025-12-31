@@ -3,21 +3,29 @@ plugins {
 }
 
 dependencies {
-    // 1. 우리 가족 모듈 가져오기
+    // 1. Nexus Framework Core & Web 모듈 연동
+    // 'api'를 사용하여 이 모듈을 쓰는 프로젝트가 Core 기능도 바로 쓸 수 있게 함
     api project(':nexus-core')
+    
+    // Web 기능 확장을 위해 nexus-web-starter 의존
+    implementation project(':nexus-web-starter')
 
     // 2. Spring Boot 관제 도구 (Actuator, AOP)
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     
-    // 필터(Filter)를 만들기 위한 웹 도구 상자
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    
-    // 3. 마이크로미터 (추적용)
+    // 3. Observability (관찰성) 핵심 라이브러리
+    // [Tracing] 요청 흐름 추적
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
     
-    // 4. 로깅 관련 (Logback, Slf4j는 부트 기본 포함이나 명시적 제어 필요시 사용)
-    // Lombok (편의성)
+    // [Metrics] 성능 지표 수집 (Prometheus 연동용)
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    
+    // 4. Utils
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // 5. Test Dependencies (수정됨: dependencies 블록 안으로 이동)
+    testImplementation project(':nexus-test-starter')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
